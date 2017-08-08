@@ -1,0 +1,24 @@
+---
+users: []
+removed_users: []
+
+#
+# users:
+#   - name: ""
+#     group:
+#     groups:                 # comma separated string, ansible < 2.3
+#     append: no
+#     home:
+#     createhome: yes
+#     shell:
+#     comment: ""
+#     key:
+#     password:
+#     update_password:
+#     expires:
+#     system: no
+#     generate_ssh_key: no
+#
+# removed_users:
+#   - testuser
+#

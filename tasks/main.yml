@@ -1,0 +1,44 @@
+---
+- name: "Create users"
+  user:
+    name:             '{{ item.name }}'
+    comment:          '{{ item.comment          | default(omit) }}'
+    shell:            '{{ item.shell            | default(omit) }}'
+    append:           '{{ item.append           | default("no") }}'
+    createhome:       '{{ item.createhome       | default("yes") }}'
+    home:             '{{ item.home             | default(omit) }}'
+    password:         '{{ item.password         | default(omit) }}'
+    update_password:  '{{ item.update_password  | default(omit) }}'
+    expires:          '{{ item.expires          | default(omit) }}'
+    system:           '{{ item.system           | default("no") }}'
+    generate_ssh_key: '{{ item.generate_ssh_key | default("no") }}'
+  with_items: '{{ users }}'
+  tags:
+    - useradd
+
+- name: "Add users to groups"
+  user:
+    name:   '{{ item.name }}'
+    group:  '{{ item.group  | default(omit) }}'
+    groups: '{{ item.groups | default(omit) }}'
+  with_items: '{{ users }}'
+  tags:
+    - useradd
+
+- name: "Authorize users to login via ssh"
+  authorized_key:
+    user: '{{ item.name }}'
+    key:  '{{ item.key }}'
+  with_items: '{{ users }}'
+  when: item.key is defined
+  tags:
+    - useradd
+
+- name: "Remove users"
+  user:
+    name:  '{{ item }}'
+    state: absent
+    force: yes
+  with_items: '{{ removed_users }}'
+  tags:
+    - userdel

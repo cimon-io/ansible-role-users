@@ -1,0 +1,17 @@
+galaxy_info:
+  author: Eugene Ignatov
+  description: manage users
+  company: Cimon.io
+  license: MIT
+  min_ansible_version: 2.0.0
+  platforms:
+    - name: Ubuntu
+      versions:
+      - all
+    - name: Debian
+      versions:
+      - all
+
+  galaxy_tags: []
+
+dependencies: []
