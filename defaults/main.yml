@@ -7,10 +7,10 @@ removed_users: []
 #   - name: ""
 #     group:
 #     groups:                 # comma separated string, ansible < 2.3
-#     append: no
+#     append: yes
 #     home:
 #     createhome: yes
-#     shell:
+#     shell: /bin/bash
 #     comment: ""
 #     key:
 #     password:

@@ -3,8 +3,7 @@
   user:
     name:             '{{ item.name }}'
     comment:          '{{ item.comment          | default(omit) }}'
-    shell:            '{{ item.shell            | default(omit) }}'
-    append:           '{{ item.append           | default("no") }}'
+    shell:            '{{ item.shell            | default("/bin/bash") }}'
     createhome:       '{{ item.createhome       | default("yes") }}'
     home:             '{{ item.home             | default(omit) }}'
     password:         '{{ item.password         | default(omit) }}'
@@ -21,7 +20,9 @@
     name:   '{{ item.name }}'
     group:  '{{ item.group  | default(omit) }}'
     groups: '{{ item.groups | default(omit) }}'
+    append: '{{ item.append | default("yes") }}'
   with_items: '{{ users }}'
+  when: (item.group is defined) or (item.groups is defined)
   tags:
     - useradd
 
