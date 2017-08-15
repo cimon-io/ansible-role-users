@@ -62,12 +62,18 @@ Inside `vars/users.yml`:
 ```yaml
 users:
   - name: john
-    groups: "www-data,admin"
+    groups: "admin"
     comment: john.doe@domain.tld
     key: "{{ lookup('file', 'files/public_keys/john.pub') }}"
+  - name: pavel
+    groups: "developer"
+    comment: pavel@domain.tld
+    key: "{{ lookup('file', 'files/public_keys/pavel.pub') }}"
 user_groups:
   - group: admin
     sudo: "ALL=(ALL) NOPASSWD:ALL"
+  - group: developer
+    sudo: "ALL=(ALL) NOPASSWD:/bin/ls, /bin/cat, /bin/more, /bin/grep, /usr/bin/head, /usr/bin/tail, /usr/bin/less"
 ```
 
 where `files/public_keys/john.pub` is a user public key.
