@@ -1,7 +1,7 @@
 ---
 - name: "Create groups"
   group:
-    name: "{{ item.group }}"
+    name: "{{ item.name }}"
   with_items: "{{ user_groups }}"
   tags:
     - groupadd
@@ -10,7 +10,7 @@
 - name: "Set sudo rights for groups"
   template:
     src: groups-sudoers.j2
-    dest: '/etc/sudoers.d/{{ item.group }}-group-sudoers'
+    dest: '/etc/sudoers.d/{{ item.name }}-group-sudoers'
     owner: root
     group: root
     mode: 0400
@@ -76,7 +76,7 @@
 
 - name: "Remove groups"
   user:
-    name: '{{ item.group }}'
+    name: '{{ item.name }}'
     state: absent
     force: yes
   with_items: '{{ removed_user_groups }}'

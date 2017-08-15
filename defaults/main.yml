@@ -27,8 +27,8 @@ removed_user_groups: []
 #   - testuser
 #
 # user_groups:
-#   - group: admin
+#   - name: admin
 #     sudo: "ALL=(ALL) NOPASSWD:ALL"
 #
 # removed_user_groups:
-#   - group: testgroup
+#   - name: testgroup

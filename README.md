@@ -34,11 +34,11 @@ removed_users:
    - testuser
 
 user_groups:
-  - group: admin
+  - name: admin
     sudo: "ALL=(ALL) NOPASSWD:ALL"
 
 removed_user_groups:
-  - group: testgroup
+  - name: testgroup
 ```
 
 Dependencies
@@ -70,9 +70,9 @@ users:
     comment: pavel@domain.tld
     key: "{{ lookup('file', 'files/public_keys/pavel.pub') }}"
 user_groups:
-  - group: admin
+  - name: admin
     sudo: "ALL=(ALL) NOPASSWD:ALL"
-  - group: developer
+  - name: developer
     sudo: "ALL=(ALL) NOPASSWD:/bin/ls, /bin/cat, /bin/more, /bin/grep, /usr/bin/head, /usr/bin/tail, /usr/bin/less"
 ```
 
