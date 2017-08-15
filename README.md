@@ -1,7 +1,7 @@
 Users role
 =========
 
-An Ansible Role for managing user accounts.
+An Ansible Role for managing user and group accounts.
 
 Requirements
 ------------
@@ -32,6 +32,13 @@ users:
 
 removed_users:
    - testuser
+
+user_groups:
+  - group: admin
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+
+removed_user_groups:
+  - group: testgroup
 ```
 
 Dependencies
@@ -55,9 +62,12 @@ Inside `vars/users.yml`:
 ```yaml
 users:
   - name: john
-    groups: "www-data"
+    groups: "www-data,admin"
     comment: john.doe@domain.tld
     key: "{{ lookup('file', 'files/public_keys/john.pub') }}"
+user_groups:
+  - group: admin
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
 ```
 
 where `files/public_keys/john.pub` is a user public key.

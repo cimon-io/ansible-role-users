@@ -2,6 +2,10 @@
 users: []
 removed_users: []
 
+user_groups: []
+removed_user_groups: []
+
+# Example:
 #
 # users:
 #   - name: ""
@@ -22,3 +26,9 @@ removed_users: []
 # removed_users:
 #   - testuser
 #
+# user_groups:
+#   - group: admin
+#     sudo: "ALL=(ALL) NOPASSWD:ALL"
+#
+# removed_user_groups:
+#   - group: testgroup

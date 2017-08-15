@@ -1,4 +1,26 @@
 ---
+- name: "Create groups"
+  group:
+    name: "{{ item.group }}"
+  with_items: "{{ user_groups }}"
+  tags:
+    - groupadd
+    - users
+
+- name: "Set sudo rights for groups"
+  template:
+    src: groups-sudoers.j2
+    dest: '/etc/sudoers.d/{{ item.group }}-group-sudoers'
+    owner: root
+    group: root
+    mode: 0400
+  with_items: '{{ user_groups }}'
+  when: item.sudo is defined
+  tags:
+    - groupadd
+    - sudo
+    - users
+
 - name: "Create users"
   user:
     name:             '{{ item.name }}'
@@ -14,6 +36,8 @@
   with_items: '{{ users }}'
   tags:
     - useradd
+    - ssh
+    - users
 
 - name: "Add users to groups"
   user:
@@ -25,6 +49,8 @@
   when: (item.group is defined) or (item.groups is defined)
   tags:
     - useradd
+    - ssh
+    - users
 
 - name: "Authorize users to login via ssh"
   authorized_key:
@@ -34,6 +60,8 @@
   when: item.key is defined
   tags:
     - useradd
+    - ssh
+    - users
 
 - name: "Remove users"
   user:
@@ -43,3 +71,24 @@
   with_items: '{{ removed_users }}'
   tags:
     - userdel
+    - ssh
+    - users
+
+- name: "Remove groups"
+  user:
+    name: '{{ item.group }}'
+    state: absent
+    force: yes
+  with_items: '{{ removed_user_groups }}'
+  tags:
+    - groupdel
+    - users
+
+- name: "Remove sudo file"
+  file:
+    name: '/etc/sudoers.d/{{ item.group }}-group-sudoers'
+    state: absent
+  with_items: '{{ removed_user_groups }}'
+  tags:
+    - groupdel
+    - users
