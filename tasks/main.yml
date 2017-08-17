@@ -1,8 +1,10 @@
 ---
 - name: "Create groups"
   group:
-    name: "{{ item.name }}"
-  with_items: "{{ user_groups }}"
+    name:   '{{ item.name }}'
+    system: '{{ item.system | default("no") }}'
+    state:  '{{ item.state  | default("present") }}'
+  with_items: '{{ users_groups }}'
   tags:
     - groupadd
     - users
@@ -14,7 +16,7 @@
     owner: root
     group: root
     mode: 0400
-  with_items: '{{ user_groups }}'
+  with_items: '{{ users_groups }}'
   when: item.sudo is defined
   tags:
     - groupadd
@@ -33,7 +35,8 @@
     expires:          '{{ item.expires          | default(omit) }}'
     system:           '{{ item.system           | default("no") }}'
     generate_ssh_key: '{{ item.generate_ssh_key | default("no") }}'
-  with_items: '{{ users }}'
+    state:            '{{ item.state            | default("present") }}'
+  with_items: '{{ users_accounts }}'
   tags:
     - useradd
     - ssh
@@ -45,7 +48,7 @@
     group:  '{{ item.group  | default(omit) }}'
     groups: '{{ item.groups | default(omit) }}'
     append: '{{ item.append | default("yes") }}'
-  with_items: '{{ users }}'
+  with_items: '{{ users_accounts }}'
   when: (item.group is defined) or (item.groups is defined)
   tags:
     - useradd
@@ -56,39 +59,10 @@
   authorized_key:
     user: '{{ item.name }}'
     key:  '{{ item.key }}'
-  with_items: '{{ users }}'
+  with_items: '{{ users_accounts }}'
   when: item.key is defined
   tags:
     - useradd
     - ssh
     - users
 
-- name: "Remove users"
-  user:
-    name:  '{{ item }}'
-    state: absent
-    force: yes
-  with_items: '{{ removed_users }}'
-  tags:
-    - userdel
-    - ssh
-    - users
-
-- name: "Remove groups"
-  user:
-    name: '{{ item.name }}'
-    state: absent
-    force: yes
-  with_items: '{{ removed_user_groups }}'
-  tags:
-    - groupdel
-    - users
-
-- name: "Remove sudo file"
-  file:
-    name: '/etc/sudoers.d/{{ item.group }}-group-sudoers'
-    state: absent
-  with_items: '{{ removed_user_groups }}'
-  tags:
-    - groupdel
-    - users

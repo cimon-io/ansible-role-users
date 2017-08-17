@@ -1,13 +1,10 @@
 ---
-users: []
-removed_users: []
-
-user_groups: []
-removed_user_groups: []
+users_accounts: []
+users_groups: []
 
 # Example:
 #
-# users:
+# users_accounts:
 #   - name: ""
 #     group:
 #     groups:                 # comma separated string, ansible < 2.3
@@ -22,13 +19,10 @@ removed_user_groups: []
 #     expires:
 #     system: no
 #     generate_ssh_key: no
+#     state: present
 #
-# removed_users:
-#   - testuser
-#
-# user_groups:
+# users_groups:
 #   - name: admin
+#     state: present
 #     sudo: "ALL=(ALL) NOPASSWD:ALL"
 #
-# removed_user_groups:
-#   - name: testgroup
