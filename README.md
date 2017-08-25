@@ -1,53 +1,87 @@
-Users role
-=========
+# Ansible users role
 
-An Ansible Role for managing user and group accounts.
+An ansible role for managing user and group accounts. The role includes the following tasks:
 
-Requirements
-------------
+1. Create groups specified by `users_groups`.
+2. Set sudo rights for groups where necessary.
+3. Create users from the `users_accounts` array with specified parameters.
+4. Add users to groups.
+5. Authorize users to login via SSH.
 
-None.
+This role can be run under all versions of Ubuntu and Debian.
 
-Role Variables
---------------
+## Requirements
+
+None
+
+## Role Variables
 
 Available variables are listed below, along with default values (see `defaults/main.yml`):
 
 ```yaml
-users:
-   - name: ""
-     group:
-     groups:          # comma separated string, ansible < 2.3
-     append: no
-     home:
-     createhome: yes
-     shell:
-     comment: ""
-     key:
-     password:
-     update_password:
-     expires:
-     system: no
-     generate_ssh_key: no
-
-removed_users:
-   - testuser
-
-user_groups:
-  - name: admin
-    sudo: "ALL=(ALL) NOPASSWD:ALL"
-
-removed_user_groups:
-  - name: testgroup
+users_accounts: []    # An array of user accounts
+users_groups: []      # An array of user groups
 ```
 
-Dependencies
-------------
+### User accounts
 
-None.
+Each user account can include some of the following parameters. The only required parameter is `name`:
 
-Example Playbook
-----------------
+```yaml
+users_accounts:
+  - name: ""                # A user name
+```
+
+To specify a primary group for an account use a `group` parameter. To put a user to a list of groups, use `groups` value as a string of group names separated with a comma. For ansible 2.2 verion and below this is the only allowed format for several groups. Now it is also possible to use YAML lists. When the parameter is set to an empty string (`groups=`), the user is removed from all groups except the primary group.
+
+```yaml
+    group:                  # A name of the primary group to which the user belongs
+    groups:                 # A string of the user group names separated with a comma
+    append: yes             # If 'yes', will only add groups, not set them to just the list in 'groups'
+```
+
+You are able to set if a home directory should be created for the user when the account is created or if the home directory does not exist with a parameter `createhome`:
+
+```yaml
+    createhome: yes         # Set `no` if a home directory should not be created
+    home:                   # The user's home directory
+```
+
+To add an SSH authorized key and a password set corresponding parameters. The possible values of `update_password` are `always` and `on_create`. 'Always' will update passwords if they differ; 'on_create' will only set the password for created users.
+
+```yaml
+    key:                    # The SSH public key as a string or (since 1.9) url
+    generate_ssh_key: no    # Whether to generate a SSH key for the user (will not overwrite an existing SSH key)
+    password:               # The user's password
+    update_password:
+```
+
+Configure some other optional parameters if necessary:
+
+```yaml
+    shell: /bin/bash        # The user's shell
+    comment: ""             # A description of the user account
+    expires:                # An expiry time for the user
+    system: no              # Create the user account as system (cannot be changed for existing users)
+    state: present          # Create the account if it as absent
+```
+
+### User groups
+
+User groups should be specified by parameters:
+
+```yaml
+users_groups:
+  - name: admin                       # A group name
+    state: present                    # Create a group if it is absent
+    sudo: "ALL=(ALL) NOPASSWD:ALL"    # Set rights to the group
+```
+
+## Dependencies
+
+None
+
+## Example Playbook
 
 ```yaml
 - hosts: all
@@ -60,25 +94,40 @@ Example Playbook
 Inside `vars/users.yml`:
 
 ```yaml
-users:
-  - name: john
-    groups: "admin"
-    comment: john.doe@domain.tld
-    key: "{{ lookup('file', 'files/public_keys/john.pub') }}"
-  - name: pavel
-    groups: "developer"
-    comment: pavel@domain.tld
-    key: "{{ lookup('file', 'files/public_keys/pavel.pub') }}"
-user_groups:
+# Specify some groups:
+users_groups:
   - name: admin
     sudo: "ALL=(ALL) NOPASSWD:ALL"
+  - name: deploy
   - name: developer
     sudo: "ALL=(ALL) NOPASSWD:/bin/ls, /bin/cat, /bin/more, /bin/grep, /usr/bin/head, /usr/bin/tail, /usr/bin/less"
 ```
 
-where `files/public_keys/john.pub` is a user public key.
+```yaml
+# Specify user accounts:
+users_accounts:
+  - name: deploy
+    group: deploy
+    comment: Deploy user
 
-License
--------
+  - name: alex
+    groups: 'deploy,admin'
+    comment: alexey@gmail.com
+    key: "{{ lookup('file', 'files/public_keys/alex.pub') }}"
 
-MIT
+  - name: jack
+    groups: 'deploy,admin'
+    comment: jackson@mail.com
+    key: "{{ lookup('file', 'files/public_keys/jack.pub') }}"
+
+  - name: pavel
+    groups: 'deploy,developer'
+    comment: pavel@example.com
+    key: "{{ lookup('file', 'files/public_keys/pavel.pub') }}"
+```
+
+where `files/public_keys/alex.pub` is a user public key.
+
+## License
+
+Licensed under the [MIT License](https://opensource.org/licenses/MIT).
