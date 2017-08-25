@@ -56,6 +56,12 @@ To add an SSH authorized key and a password set corresponding parameters. The po
     update_password:
 ```
 
+The `state` parameter allows to manage a user account depending on whether it exists or not. If it's `present`, a new user will be created. If the value is `absent`, the user will be removed. The action is taken only when the current account state is different from what is set:
+
+```yaml
+    state: present          # Create the account if it is absent
+```
+
 Configure some other optional parameters if necessary:
 
 ```yaml
@@ -63,7 +69,6 @@ Configure some other optional parameters if necessary:
     comment: ""             # A description of the user account
     expires:                # An expiry time for the user
     system: no              # Create the user account as system (cannot be changed for existing users)
-    state: present          # Create the account if it as absent
 ```
 
 ### User groups
