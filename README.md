@@ -32,7 +32,7 @@ users_accounts:
   - name: ""                # A user name
 ```
 
-To specify a primary group for an account use a `group` parameter. To put a user to a list of groups, use `groups` value as a string of group names separated with a comma. For ansible 2.2 verion and below this is the only allowed format for several groups. Now it is also possible to use YAML lists. When the parameter is set to an empty string (`groups=`), the user is removed from all groups except the primary group.
+To specify a primary group for an account use a `group` parameter. To put a user to a list of groups, use `groups` value as a string of group names separated with a comma. For ansible 2.2 version and below this is the only allowed format for several groups. Now it is also possible to use YAML lists. When the parameter is set to an empty string (`groups=`), the user is removed from all groups except the primary group.
 
 ```yaml
     group:                  # A name of the primary group to which the user belongs
