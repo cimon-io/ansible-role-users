@@ -1,68 +1,64 @@
 ---
 - name: "Create groups"
   group:
-    name:   '{{ item.name }}'
-    system: '{{ item.system | default("no") }}'
-    state:  '{{ item.state  | default("present") }}'
-  with_items: '{{ users_groups }}'
+    name:   "{{ item.name }}"
+    system: "{{ item.system | default('no') }}"
+    state:  "{{ item.state  | default('present') }}"
+  with_items: "{{ users_groups }}"
   tags:
-    - groupadd
+    - users-groupadd
     - users
 
 - name: "Set sudo rights for groups"
   template:
     src: groups-sudoers.j2
-    dest: '/etc/sudoers.d/{{ item.name }}-group-sudoers'
+    dest: "/etc/sudoers.d/{{ item.name }}-group-sudoers"
     owner: root
     group: root
     mode: 0400
-  with_items: '{{ users_groups }}'
+  with_items: "{{ users_groups }}"
   when: item.sudo is defined
   tags:
-    - groupadd
-    - sudo
+    - users-groupadd
     - users
 
 - name: "Create users"
   user:
-    name:             '{{ item.name }}'
-    comment:          '{{ item.comment          | default(omit) }}'
-    shell:            '{{ item.shell            | default("/bin/bash") }}'
-    createhome:       '{{ item.createhome       | default("yes") }}'
-    home:             '{{ item.home             | default(omit) }}'
-    password:         '{{ item.password         | default(omit) }}'
-    update_password:  '{{ item.update_password  | default(omit) }}'
-    expires:          '{{ item.expires          | default(omit) }}'
-    system:           '{{ item.system           | default("no") }}'
-    generate_ssh_key: '{{ item.generate_ssh_key | default("no") }}'
-    state:            '{{ item.state            | default("present") }}'
-  with_items: '{{ users_accounts }}'
+    name:             "{{ item.name }}"
+    comment:          "{{ item.comment          | default(omit) }}"
+    shell:            "{{ item.shell            | default('/bin/bash') }}"
+    createhome:       "{{ item.createhome       | default('yes') }}"
+    home:             "{{ item.home             | default(omit) }}"
+    password:         "{{ item.password         | default(omit) }}"
+    update_password:  "{{ item.update_password  | default(omit) }}"
+    expires:          "{{ item.expires          | default(omit) }}"
+    system:           "{{ item.system           | default('no') }}"
+    generate_ssh_key: "{{ item.generate_ssh_key | default('no') }}"
+    state:            "{{ item.state            | default('present') }}"
+  with_items: "{{ users_accounts }}"
   tags:
-    - useradd
-    - ssh
+    - users-useradd
     - users
 
 - name: "Add users to groups"
   user:
-    name:   '{{ item.name }}'
-    group:  '{{ item.group  | default(omit) }}'
-    groups: '{{ item.groups | default(omit) }}'
-    append: '{{ item.append | default("yes") }}'
-  with_items: '{{ users_accounts }}'
+    name:   "{{ item.name }}"
+    group:  "{{ item.group  | default(omit) }}"
+    groups: "{{ item.groups | default(omit) }}"
+    append: "{{ item.append | default('yes') }}"
+  with_items: "{{ users_accounts }}"
   when: (item.group is defined) or (item.groups is defined)
   tags:
-    - useradd
-    - ssh
+    - users-useradd
     - users
 
 - name: "Authorize users to login via ssh"
   authorized_key:
-    user: '{{ item.name }}'
-    key:  '{{ item.key }}'
-  with_items: '{{ users_accounts }}'
+    user: "{{ item.name }}"
+    key:  "{{ item.key }}"
+  with_items: "{{ users_accounts }}"
   when: item.key is defined
   tags:
-    - useradd
-    - ssh
+    - users-useradd
     - users
 
