@@ -1,15 +1,14 @@
 ---
-- name: "Create groups"
+- name: "create groups"
   group:
     name:   "{{ item.name }}"
     system: "{{ item.system | default('no') }}"
     state:  "{{ item.state  | default('present') }}"
   with_items: "{{ users_groups }}"
   tags:
-    - users-groupadd
     - users
 
-- name: "Set sudo rights for groups"
+- name: "set sudo rights for groups"
   template:
     src: groups-sudoers.j2
     dest: "/etc/sudoers.d/{{ item.name }}-group-sudoers"
@@ -19,10 +18,9 @@
   with_items: "{{ users_groups }}"
   when: item.sudo is defined
   tags:
-    - users-groupadd
     - users
 
-- name: "Create users"
+- name: "create users"
   user:
     name:             "{{ item.name }}"
     comment:          "{{ item.comment          | default(omit) }}"
@@ -37,10 +35,9 @@
     state:            "{{ item.state            | default('present') }}"
   with_items: "{{ users_accounts }}"
   tags:
-    - users-useradd
     - users
 
-- name: "Add users to groups"
+- name: "add users to groups"
   user:
     name:   "{{ item.name }}"
     group:  "{{ item.group  | default(omit) }}"
@@ -49,16 +46,13 @@
   with_items: "{{ users_accounts }}"
   when: (item.group is defined) or (item.groups is defined)
   tags:
-    - users-useradd
     - users
 
-- name: "Authorize users to login via ssh"
+- name: "authorize users to login via ssh"
   authorized_key:
     user: "{{ item.name }}"
     key:  "{{ item.key }}"
   with_items: "{{ users_accounts }}"
   when: item.key is defined
   tags:
-    - users-useradd
     - users
-
