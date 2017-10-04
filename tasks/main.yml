@@ -10,11 +10,11 @@
 
 - name: "set sudo rights for groups"
   template:
-    src: groups-sudoers.j2
-    dest: "/etc/sudoers.d/{{ item.name }}-group-sudoers"
+    src:   groups-sudoers.j2
+    dest:  "/etc/sudoers.d/{{ item.name }}-group-sudoers"
     owner: root
     group: root
-    mode: 0400
+    mode:  0400
   with_items: "{{ users_groups }}"
   when: item.sudo is defined
   tags:

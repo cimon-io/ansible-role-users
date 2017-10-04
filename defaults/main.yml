@@ -2,21 +2,20 @@
 users_accounts: []
 users_groups: []
 
-# Example:
 #
 # users_accounts:
 #   - name: ""
-#     group:
-#     groups:                 # comma separated string, ansible < 2.3
+#     group: (omit)
+#     groups: (omit)          # comma separated string
 #     append: yes
-#     home:
+#     home: (omit)
 #     createhome: yes
 #     shell: /bin/bash
 #     comment: ""
-#     key:
-#     password:
-#     update_password:
-#     expires:
+#     key: (omit)
+#     password: (omit)
+#     update_password: (omit)
+#     expires: (omit)
 #     system: no
 #     generate_ssh_key: no
 #     state: present
