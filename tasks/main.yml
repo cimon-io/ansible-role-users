@@ -58,8 +58,6 @@
     dest: "~{{ item.name }}/.dotfiles"
     update: no
     version: "{{ item.dotfiles_version | default(omit) }}"
-    owner: "{{ item.name }}"
-    group: "{{ item.name }}"
   become_user: "{{ item.name }}"
   when: item.dotfiles_repo is defined
   with_items: "{{ users_accounts }}"
