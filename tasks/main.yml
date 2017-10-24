@@ -74,7 +74,7 @@
 - name: "install dotfiles"
   shell: "~/.dotfiles/install.sh"
   become_user: "{{ item.name }}"
-  when: (item.dotfiles_repo is defined) and install_script.exists
+  when: (item.dotfiles_repo is defined) and install_script.stat.exists
   with_items: "{{ users_accounts }}"
   tags: [users, users-accounts, users-dotfiles]
 
