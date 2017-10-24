@@ -66,15 +66,15 @@
 - name: "find install script"
   stat:
     path: "~{{ item.name }}/.dotfiles/install.sh"
-  register: install_script
+  register: st
   become_user: "{{ item.name }}"
   with_items: "{{ users_accounts }}"
   tags: [users, users-accounts, users-dotfiles]
 
 - name: "install dotfiles"
-  shell: "~/.dotfiles/install.sh"
-  become_user: "{{ item.name }}"
-  when: (item.dotfiles_repo is defined) and install_script.stat.exists
-  with_items: "{{ users_accounts }}"
+  shell: "/bin/bash ~/.dotfiles/install.sh"
+  become_user: "{{ item.item.name }}"
+  when: item.stat.exists and item.item.dotfiles_repo is defined
+  with_items: "{{ st.results }}"
   tags: [users, users-accounts, users-dotfiles]
 
