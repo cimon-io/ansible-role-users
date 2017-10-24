@@ -5,8 +5,7 @@
     system: "{{ item.system | default('no') }}"
     state:  "{{ item.state  | default('present') }}"
   with_items: "{{ users_groups }}"
-  tags:
-    - users
+  tags: [users, users-groups]
 
 - name: "set sudo rights for groups"
   template:
@@ -17,8 +16,7 @@
     mode:  0400
   with_items: "{{ users_groups }}"
   when: item.sudo is defined
-  tags:
-    - users
+  tags: [users, users-groups]
 
 - name: "create users"
   user:
@@ -34,8 +32,7 @@
     generate_ssh_key: "{{ item.generate_ssh_key | default('no') }}"
     state:            "{{ item.state            | default('present') }}"
   with_items: "{{ users_accounts }}"
-  tags:
-    - users
+  tags: [users, users-accounts]
 
 - name: "add users to groups"
   user:
@@ -45,8 +42,7 @@
     append: "{{ item.append | default('yes') }}"
   with_items: "{{ users_accounts }}"
   when: (item.group is defined) or (item.groups is defined)
-  tags:
-    - users
+  tags: [users, users-groups, users-accounts]
 
 - name: "authorize users to login via ssh"
   authorized_key:
@@ -54,5 +50,33 @@
     key:  "{{ item.key }}"
   with_items: "{{ users_accounts }}"
   when: item.key is defined
-  tags:
-    - users
+  tags: [users, users-accounts]
+
+- name: "clone dotfiles"
+  git:
+    repo: "{{ item.dotfiles_repo }}"
+    dest: "~{{ item.name }}/.dotfiles"
+    update: no
+    version: "{{ item.dotfiles_version | default(omit) }}"
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+  become_user: "{{ item.name }}"
+  when: item.dotfiles_repo is defined
+  with_items: "{{ users_accounts }}"
+  tags: [users, users-accounts, users-dotfiles]
+
+- name: "find install script"
+  stat:
+    path: "~{{ item.name }}/.dotfiles/install.sh"
+  register: install_script
+  become_user: "{{ item.name }}"
+  with_items: "{{ users_accounts }}"
+  tags: [users, users-accounts, users-dotfiles]
+
+- name: "install dotfiles"
+  shell: "~/.dotfiles/install.sh"
+  become_user: "{{ item.name }}"
+  when: (item.dotfiles_repo is defined) and install_script.exists
+  with_items: "{{ users_accounts }}"
+  tags: [users, users-accounts, users-dotfiles]
+

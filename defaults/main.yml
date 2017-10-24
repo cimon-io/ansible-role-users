@@ -19,6 +19,8 @@ users_groups: []
 #     system: no
 #     generate_ssh_key: no
 #     state: present
+#     dotfiles_repo:
+#     dotfiles_version: (omit)
 #
 # users_groups:
 #   - name: admin
