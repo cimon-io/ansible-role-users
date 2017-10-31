@@ -7,6 +7,8 @@ An ansible role for managing user and group accounts. The role includes the foll
 3. Create users from the `users_accounts` array with specified parameters.
 4. Add users to groups.
 5. Authorize users to login via SSH.
+6. Clone `dotfiles` repository (if `dotfiles_repo` is defined) to `$HOME/.dotfiles` for each user.
+7. Look for `install.sh` scripts and run them.
 
 This role can be run under all versions of Ubuntu and Debian.
 
@@ -35,8 +37,8 @@ users_accounts:
 To specify a primary group for an account use a `group` parameter. To put a user to a list of groups, use `groups` value as a string of group names separated with a comma. For ansible 2.2 version and below this is the only allowed format for several groups. Now it is also possible to use YAML lists. When the parameter is set to an empty string (`groups=`), the user is removed from all groups except the primary group.
 
 ```yaml
-    group:                  # A name of the primary group to which the user belongs
-    groups:                 # A string of the user group names separated with a comma
+    group: (omit)           # A name of the primary group to which the user belongs
+    groups: (omit)          # A string of the user group names separated with a comma
     append: yes             # If 'yes', will only add groups, not set them to just the list in 'groups'
 ```
 
@@ -44,16 +46,16 @@ You are able to set if a home directory should be created for the user when the 
 
 ```yaml
     createhome: yes         # Set `no` if a home directory should not be created
-    home:                   # The user's home directory
+    home: (omit)            # The user's home directory
 ```
 
 To add an SSH authorized key and a password set corresponding parameters. The possible values of `update_password` are `always` and `on_create`. 'Always' will update passwords if they differ; 'on_create' will only set the password for created users.
 
 ```yaml
-    key:                    # The SSH public key as a string or (since 1.9) url
+    key: (omit)             # The SSH public key as a string or (since 1.9) url
     generate_ssh_key: no    # Whether to generate a SSH key for the user (will not overwrite an existing SSH key)
-    password:               # The user's password
-    update_password:
+    password: (omit)        # The user's password
+    update_password: (omit)
 ```
 
 The `state` parameter allows to manage a user account depending on whether it exists or not. If it's `present`, a new user will be created. If the value is `absent`, the user will be removed. The action is taken only when the current account state is different from what is set:
@@ -62,12 +64,19 @@ The `state` parameter allows to manage a user account depending on whether it ex
     state: present          # Create the account if it is absent
 ```
 
+To upload user's dotfiles repository of a specified version use the following parameters:
+
+```yaml
+    dotfiles_repo:            # Path to a dotfiles repository
+    dotfiles_version: (omit)  # Required version
+```
+
 Configure some other optional parameters if necessary:
 
 ```yaml
     shell: /bin/bash        # The user's shell
     comment: ""             # A description of the user account
-    expires:                # An expiry time for the user
+    expires: (omit)         # An expiry time for the user
     system: no              # Create the user account as system (cannot be changed for existing users)
 ```
 
