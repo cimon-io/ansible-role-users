@@ -61,6 +61,7 @@
   become_user: "{{ item.name }}"
   when: item.dotfiles_repo is defined
   with_items: "{{ users_accounts }}"
+  register: dotfiles_updated
   tags: [users, users-accounts, users-dotfiles]
 
 - name: "find install script"
@@ -68,13 +69,19 @@
     path: "~{{ item.name }}/.dotfiles/install.sh"
   register: st
   become_user: "{{ item.name }}"
+  when:
+    - item.dotfiles_repo is defined
+    - dotfiles_updated is changed
   with_items: "{{ users_accounts }}"
   tags: [users, users-accounts, users-dotfiles]
 
 - name: "install dotfiles"
   shell: "/bin/bash ~/.dotfiles/install.sh"
   become_user: "{{ item.item.name }}"
-  when: item.stat.exists and item.item.dotfiles_repo is defined
+  when:
+    - item.stat.exists
+    - item.item.dotfiles_repo is defined
+    - dotfiles_updated is changed
   with_items: "{{ st.results }}"
   tags: [users, users-accounts, users-dotfiles]
 
