@@ -5,6 +5,7 @@
     system: "{{ item.system | default('no') }}"
     state:  "{{ item.state  | default('present') }}"
   with_items: "{{ users_groups }}"
+  become: True
   tags: [users, users-groups]
 
 - name: "set sudo rights for groups"
@@ -16,6 +17,7 @@
     mode:  0400
   with_items: "{{ users_groups }}"
   when: item.sudo is defined
+  become: True
   tags: [users, users-groups]
 
 - name: "create users"
@@ -32,6 +34,7 @@
     generate_ssh_key: "{{ item.generate_ssh_key | default('no') }}"
     state:            "{{ item.state            | default('present') }}"
   with_items: "{{ users_accounts }}"
+  become: True
   tags: [users, users-accounts]
 
 - name: "add users to groups"
@@ -42,6 +45,7 @@
     append: "{{ item.append | default('yes') }}"
   with_items: "{{ users_accounts }}"
   when: (item.group is defined) or (item.groups is defined)
+  become: True
   tags: [users, users-groups, users-accounts]
 
 - name: "authorize users to login via ssh"
@@ -50,6 +54,7 @@
     key:  "{{ item.key }}"
   with_items: "{{ users_accounts }}"
   when: item.key is defined
+  become: True
   tags: [users, users-accounts]
 
 - name: "clone dotfiles"
@@ -58,6 +63,7 @@
     dest: "~{{ item.name }}/.dotfiles"
     update: no
     version: "{{ item.dotfiles_version | default(omit) }}"
+  become: True
   become_user: "{{ item.name }}"
   when: item.dotfiles_repo is defined
   with_items: "{{ users_accounts }}"
@@ -77,6 +83,7 @@
 
 - name: "install dotfiles"
   shell: "/bin/bash ~/.dotfiles/install.sh"
+  become: True
   become_user: "{{ item.item.name }}"
   when:
     - item.stat.exists
@@ -84,4 +91,3 @@
     - dotfiles_updated is changed
   with_items: "{{ st.results }}"
   tags: [users, users-accounts, users-dotfiles]
-
