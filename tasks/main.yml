@@ -74,6 +74,7 @@
   stat:
     path: "~{{ item.name }}/.dotfiles/install.sh"
   register: st
+  become: True
   become_user: "{{ item.name }}"
   when:
     - item.dotfiles_repo is defined
