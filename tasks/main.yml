@@ -78,7 +78,6 @@
   become_user: "{{ item.name }}"
   when:
     - item.dotfiles_repo is defined
-    - dotfiles_updated is changed
   with_items: "{{ users_accounts }}"
   tags: [users, users-accounts, users-dotfiles]
 
@@ -87,8 +86,7 @@
   become: True
   become_user: "{{ item.item.name }}"
   when:
-    - item.stat.exists
-    - item.item.dotfiles_repo is defined
+    - item.stat is defined
     - dotfiles_updated is changed
   with_items: "{{ st.results }}"
   tags: [users, users-accounts, users-dotfiles]
