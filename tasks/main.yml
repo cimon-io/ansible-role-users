@@ -70,23 +70,9 @@
   register: dotfiles_updated
   tags: [users, users-accounts, users-dotfiles]
 
-- name: "find install script"
-  stat:
-    path: "~{{ item.name }}/.dotfiles/install.sh"
-  register: st
-  become: True
-  become_user: "{{ item.name }}"
-  when:
-    - item.dotfiles_repo is defined
-  with_items: "{{ users_accounts }}"
-  tags: [users, users-accounts, users-dotfiles]
-
 - name: "install dotfiles"
-  shell: "/bin/bash ~/.dotfiles/install.sh"
-  become: True
-  become_user: "{{ item.item.name }}"
-  when:
-    - item.stat is defined
-    - dotfiles_updated is changed
-  with_items: "{{ st.results }}"
+  include_tasks: dotfiles.yml
+  with_items: "{{ users_accounts}}"
+  loop_control:
+    loop_var: user_item
   tags: [users, users-accounts, users-dotfiles]

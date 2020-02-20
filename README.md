@@ -7,8 +7,7 @@ An ansible role for managing user and group accounts. The role includes the foll
 3. Create users from the `users_accounts` array with specified parameters.
 4. Add users to groups.
 5. Authorize users to login via SSH.
-6. Clone `dotfiles` repository (if `dotfiles_repo` is defined) to `$HOME/.dotfiles` for each user.
-7. Look for `install.sh` scripts and run them.
+6. Clone `dotfiles` repository (if `dotfiles_repo` is defined) to `$HOME/.dotfiles` for each user and link dotfiles to `$HOME` directory.
 
 This role can be run under all versions of Ubuntu and Debian.
 
