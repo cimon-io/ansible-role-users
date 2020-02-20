@@ -1,0 +1,21 @@
+---
+- name: "get list of dotfiles"
+  find:
+    file_type: any
+    path: "~{{ user_item.name }}/.dotfiles/"
+    recurse: no
+  register: st
+  become: True
+  become_user: "{{ user_item.name }}"
+  when: user_item.dotfiles_repo is defined
+
+- name: "link dotfiles"
+  file:
+    src: "{{ item.path }}"
+    dest: "~{{ user_item.name }}/.{{ item.path | basename }}"
+    state: link
+    force: yes
+  become: True
+  become_user: "{{ user_item.name }}"
+  when: st is not skipped
+  with_items: "{{ st.files }}"
