@@ -8,6 +8,7 @@
   become: True
   become_user: "{{ user_item.name }}"
   when: user_item.dotfiles_repo is defined
+  tags: [users, users-accounts, users-dotfiles]
 
 - name: "link dotfiles"
   file:
@@ -19,3 +20,4 @@
   become_user: "{{ user_item.name }}"
   when: st is not skipped
   with_items: "{{ st.files }}"
+  tags: [users, users-accounts, users-dotfiles]
