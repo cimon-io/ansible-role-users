@@ -32,6 +32,7 @@
     expires:          "{{ item.expires          | default(omit) }}"
     system:           "{{ item.system           | default('no') }}"
     generate_ssh_key: "{{ item.generate_ssh_key | default('no') }}"
+    ssh_key_type:     "{{ item.ssh_key_type     | default('rsa') }}"
     state:            "{{ item.state            | default('present') }}"
   with_items: "{{ users_accounts }}"
   become: True
